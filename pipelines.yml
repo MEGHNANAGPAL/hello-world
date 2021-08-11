@@ -1,0 +1,31 @@
+stages:
+    - build
+    - build-QA
+    - test
+
+build:
+    stage: build
+    script:
+    - echo 'build'
+    - curl -fLhttps://getcli.jfrog.io | sh
+    - ./jfrog rt config --url=$https://cwb.jfrog.io/artifactory/test-intern-dev/ --user=$nagpalm --password=mdEKu$YW5;gy
+    - ./jfrog rt c show
+    - ./jfrog rt dl test-intern-dev --build-name=git-intern-build --build-number $CI_JOB_ID
+    - touch build-artifacts
+    - ./jfrog rt bce git-intern-build $CI_JOB_ID
+    - ./jfrog rt bp git-intern-build $CI_JOB_ID
+    - ./jfrog rgt bpr git-intern-build $CI_JOB_ID test-intern-QA
+    
+
+build-QA:
+    stage: build-QA
+    script:
+    - echo 'buildQA'
+    
+test:
+    stage: test
+    script:
+    - echo "testing"
+    
+
+    
